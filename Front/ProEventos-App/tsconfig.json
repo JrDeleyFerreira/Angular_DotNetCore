@@ -22,7 +22,15 @@
     "lib": [
       "ES2022",
       "dom"
-    ]
+    ],
+    "paths": {
+      "@app/*": [
+        "../../Front/ProEventos-App/src/app/*"
+      ],
+      "@environments/*": [
+        "../../Front/ProEventos-App/src/environments/*"
+      ]
+    },
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,
