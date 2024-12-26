@@ -12,30 +12,34 @@ public class EventoPersistence : IEventoPersistence
     public EventoPersistence(ProEventosContext context)
         => _context = context;
 
-    public async Task<Evento[]> GetAllEventosAsync(bool includePalestrantes = false)
+    public async Task<Evento[]> GetAllEventosAsync(int userId, bool includePalestrantes = false)
     {
         var query = IncludeCompositions(includePalestrantes);
 
-        return await query.AsNoTracking().OrderBy(e => e.Id).ToArrayAsync();
+        return await query.AsNoTracking()
+            .Where(e => e.UserId == userId)
+			.OrderBy(e => e.Id).ToArrayAsync();
     }
 
-    public async Task<Evento[]> GetAllEventosByTemaAsync(string tema, bool includePalestrantes = false)
+    public async Task<Evento[]> GetAllEventosByTemaAsync(int userId, string tema, bool includePalestrantes = false)
     {
         var query = IncludeCompositions(includePalestrantes);
 
         return await query.AsNoTracking()
             .OrderBy(e => e.Id)
-            .Where(e => e.Tema!.ToLower().Contains(tema.ToLower()))
+            .Where(e => 
+                e.Tema!.Contains(tema, StringComparison.CurrentCultureIgnoreCase) && 
+                e.UserId == userId)
             .ToArrayAsync();
     }
 
-    public async Task<Evento?> GetEventoByIdAsync(int eventoId, bool includePalestrantes = false)
+    public async Task<Evento?> GetEventoByIdAsync(int userId, int eventoId, bool includePalestrantes = false)
     {
         var query = IncludeCompositions(includePalestrantes);
 
         return await query.AsNoTracking()
             .OrderBy(e => e.Id)
-            .FirstOrDefaultAsync(e => e.Id == eventoId);
+            .FirstOrDefaultAsync(e => e.Id == eventoId && e.UserId == userId);
     }
 
     private IQueryable<Evento> IncludeCompositions(bool includePalestrantes)
