@@ -32,7 +32,7 @@ public class AccountController : ControllerBase
 		}
 		catch (Exception ex)
 		{
-			return StatusCode(StatusCodes.Status500InternalServerError, 
+			return StatusCode(StatusCodes.Status500InternalServerError,
 				$"Erro ao tentar recuperar Usuário. Erro: {ex.Message}");
 		}
 	}
@@ -49,7 +49,12 @@ public class AccountController : ControllerBase
 			var user = await _accountService.CreateAccountAsync(userDto);
 			return user is null
 				? BadRequest("Erro ao tentar registrar Usuário.")
-				: Ok(user);
+				: Ok(new
+				{
+					username = user.UserName,
+					primeiroNome = user.PrimeiroNome,
+					token = _tokenService.CreateToken(user).Result
+				});
 		}
 		catch (Exception ex)
 		{
@@ -67,7 +72,7 @@ public class AccountController : ControllerBase
 			if (user == null) return Unauthorized("Usuário não encontrado.");
 
 			var result = await _accountService.CheckUserPasswordAsync(user, userLoginDto.Password!);
-			
+
 			return !result.Succeeded
 				? Unauthorized("Usuário ou senha incorretos.")
 				: Ok(new
@@ -93,12 +98,17 @@ public class AccountController : ControllerBase
 			var user = await _accountService.GetUserByUserNameAsync(userName!);
 
 			if (user == null) return Unauthorized("Usuário inválido.");
-			
+
 			var updatedUser = await _accountService.UpdateAccount(userUpdateDto);
-			
+
 			return updatedUser is null
 				? NoContent()
-				: Ok(updatedUser);
+				: Ok(new
+				{
+					username = updatedUser.UserName,
+					primeiroNome = updatedUser.PrimeiroNome,
+					token = _tokenService.CreateToken(updatedUser).Result
+				});
 		}
 		catch (Exception ex)
 		{

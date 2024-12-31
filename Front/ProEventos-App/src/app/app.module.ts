@@ -1,4 +1,4 @@
-import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
+import { NgModule } from '@angular/core';
 import { ptBrLocale } from 'ngx-bootstrap/locale';
 import { NgxCurrencyDirective } from 'ngx-currency';
 import { DateTimeFormatPipe } from './helpers/DateTimeFormat.pipe';
@@ -15,7 +15,7 @@ import { NgxSpinnerModule } from 'ngx-spinner';
 import { AppRoutingModule } from './app-routing.module';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 
 import { AppComponent } from './app.component';
 import { EventosComponent } from './components/eventos/eventos.component';
@@ -31,57 +31,65 @@ import { UsersComponent } from './components/users/users.component';
 import { LoginComponent } from './components/users/login/login.component';
 import { RegistrationComponent } from './components/users/registration/registration.component';
 import { TituloComponent } from './shared/title/title.component';
+import { HomeComponent } from './components/home/home.component';
 
 import { EventoService } from './services/evento.service';
 import { LoteService } from './services/lote.service';
 import { defineLocale } from 'ngx-bootstrap/chronos';
+import { AccountService } from './services/account.service';
+import { JwtInterceptor } from './interceptors/jwt.interceptor';
 
 defineLocale('pt-br', ptBrLocale);
 
 @NgModule({
   declarations: [
     AppComponent,
-    EventosComponent,
-    PalestrantesComponent,
     ContatosComponent,
     DashboardComponent,
-    PerfilComponent,
-    NavComponent,
-    TituloComponent,
     DateTimeFormatPipe,
     EventoDetalheComponent,
     EventoListaComponent,
-    UsersComponent,
+    EventosComponent,
+    HomeComponent,
     LoginComponent,
-    RegistrationComponent
+    NavComponent,
+    PalestrantesComponent,
+    PerfilComponent,
+    RegistrationComponent,
+    TituloComponent,
+    UsersComponent,
   ],
   imports: [
-    BrowserModule,
-    FormsModule,
-    ReactiveFormsModule,
     AppRoutingModule,
-    HttpClientModule,
     BrowserAnimationsModule,
-    FontAwesomeModule,
-    CollapseModule.forRoot(),
-    TooltipModule.forRoot(),
-    BsDropdownModule.forRoot(),
+    BrowserModule,
     BsDatepickerModule.forRoot(),
+    BsDropdownModule.forRoot(),
+    CollapseModule.forRoot(),
+    FontAwesomeModule,
+    FormsModule,
+    HttpClientModule,
     ModalModule.forRoot(),
+    NgxCurrencyDirective,
+    NgxSpinnerModule,
+    ReactiveFormsModule,
     ToastrModule.forRoot({
       timeOut: 4000,
       positionClass: 'toast-bottom-right',
       preventDuplicates: true,
       progressBar: true
     }),
-    NgxSpinnerModule,
-    NgxCurrencyDirective
+    TooltipModule.forRoot(),
   ],
   providers: [
+    AccountService,
     EventoService,
-    LoteService
+    LoteService,
+    {
+      provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true
+    }
   ],
-  bootstrap: [AppComponent],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  bootstrap: [AppComponent]
 })
+
 export class AppModule { }

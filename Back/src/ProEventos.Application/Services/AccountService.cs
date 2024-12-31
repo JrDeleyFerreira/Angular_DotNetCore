@@ -82,10 +82,14 @@ public class AccountService : IAccountService
 			var user = await _userPersistence.GetUserByNameAsync(userUpdateDto.UserName!);
 			if (user is null) return null;
 
+			userUpdateDto.Id = user.Id;
 			_mapper.Map(userUpdateDto, user);
 
-			var token = await _userManager.GeneratePasswordResetTokenAsync(user);
-			_ = await _userManager.ResetPasswordAsync(user, token, userUpdateDto.Password!);
+			if (userUpdateDto.Password != null)
+			{
+				var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+				await _userManager.ResetPasswordAsync(user, token, userUpdateDto.Password!);
+			}
 
 			_userPersistence.Update(user);
 
@@ -109,7 +113,7 @@ public class AccountService : IAccountService
 		{
 			//return await _userManager.Users.AnyAsync(us => 
 			//	string.Equals(us.UserName!, username, StringComparison.CurrentCultureIgnoreCase));
-			
+
 			return await _userManager.Users.AnyAsync(us => us.UserName!.ToLower().Equals(username.ToLower()));
 		}
 		catch (Exception e)

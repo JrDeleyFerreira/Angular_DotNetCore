@@ -175,7 +175,7 @@ public class EventoController : ControllerBase
 	[NonAction]
 	public void DeleteImage(string imageName)
 	{
-		var imagePath = Path.Combine(_hostEnvironment.ContentRootPath, @"Resources/images", imageName);
+		var imagePath = Path.Combine(_hostEnvironment.ContentRootPath, @"Resources/Images", imageName);
 		if (System.IO.File.Exists(imagePath))
 			System.IO.File.Delete(imagePath);
 	}

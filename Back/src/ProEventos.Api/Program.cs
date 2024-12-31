@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using ProEventos.Domain.Identity;
@@ -8,16 +9,16 @@ using System.Text;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers()
-    .AddJsonOptions(options =>
-    {
-        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
-        options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+	.AddJsonOptions(options =>
+	{
+		options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+		options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
 	}
 );
 
 // Declarando contexto de base de dados
 builder.Services.AddDbContext<ProEventosContext>(
-    options => options.UseSqlite(builder.Configuration.GetConnectionString("Default"))
+	options => options.UseSqlite(builder.Configuration.GetConnectionString("Default"))
 );
 
 // ------------------------------------------------------------------------------
@@ -55,6 +56,7 @@ builder.Services.AddSwaggerGen(options =>
 	});
 });
 
+// ------------------------------------------------------------------------------
 // Dependence Injections
 builder.Services.AddScoped<IBasePersistence, BasePersistence>();
 builder.Services.AddScoped<IEventoPersistence, EventoPersistence>();
@@ -66,6 +68,7 @@ builder.Services.AddScoped<ILoteService, LoteService>();
 builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 
+// ------------------------------------------------------------------------------
 // AutoMappers
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
@@ -87,12 +90,12 @@ builder.Services.AddIdentityCore<User>(options =>
 .AddDefaultTokenProviders();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(options =>
+	.AddJwtBearer(options =>
 	{
 		options.TokenValidationParameters = new TokenValidationParameters
 		{
 			ValidateIssuerSigningKey = true,
-			IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8 .GetBytes(builder.Configuration.GetSection("AppSettings:TokenKey").Value!)),
+			IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration.GetSection("AppSettings:TokenKey").Value!)),
 			ValidateIssuer = false,
 			ValidateAudience = false
 		};
@@ -107,8 +110,8 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+	app.UseSwagger();
+	app.UseSwaggerUI();
 }
 
 app.UseHttpsRedirection();
@@ -118,8 +121,17 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.UseCors(x => x
-    .AllowAnyHeader()
-    .AllowAnyMethod()
-    .AllowAnyOrigin());
+	.AllowAnyHeader()
+	.AllowAnyMethod()
+	.AllowAnyOrigin());
+
+// ------------------------------------------------------------------------------
+// Imagens de resources
+app.UseStaticFiles(new StaticFileOptions()
+{
+	FileProvider = new PhysicalFileProvider(
+		Path.Combine(Directory.GetCurrentDirectory(), @"Resources")),
+	RequestPath = new PathString("/Resources")
+});
 
 app.Run();
