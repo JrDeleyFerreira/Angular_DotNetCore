@@ -3,6 +3,7 @@ using ProEventos.Application.Dtos;
 using ProEventos.Application.Interfaces;
 using ProEventos.Domain.Entities;
 using ProEventos.Persisttence.Interfaces;
+using ProEventos.Persisttence.Pagination;
 
 namespace ProEventos.Application.Services;
 
@@ -29,7 +30,7 @@ public class EventoService : IEventoService
             var evento = _mapper.Map<Evento>(model);
             evento.UserId = userId;
 
-			_basePersistence.Add(evento);
+            _basePersistence.Add(evento);
 
             if (await _basePersistence.SaveChangesAsync())
             {
@@ -55,13 +56,13 @@ public class EventoService : IEventoService
             model.Id = evento.Id;
             model.UserId = userId;
 
-			_mapper.Map(model, evento);
+            _mapper.Map(model, evento);
 
             _basePersistence.Update<Evento>(evento);
 
             if (await _basePersistence.SaveChangesAsync())
             {
-                var eventoRetorno = await _eventoPersistence.GetEventoByIdAsync(evento.Id, false);
+                var eventoRetorno = await _eventoPersistence.GetEventoByIdAsync(userId, evento.Id, false);
 
                 return _mapper.Map<EventoDto>(eventoRetorno);
             }
@@ -89,31 +90,23 @@ public class EventoService : IEventoService
         }
     }
 
-    public async Task<EventoDto[]?> GetAllEventosAsync(int userId, bool includePalestrantes = false)
+    public async Task<PageList<EventoDto>?> GetAllEventosAsync(int userId, PageParams pageParams,
+        bool includePalestrantes = false)
     {
         try
         {
-            var eventos = await _eventoPersistence.GetAllEventosAsync(userId, includePalestrantes);
+            var eventos = await _eventoPersistence.GetAllEventosAsync(userId, pageParams,
+                includePalestrantes);
+
             if (eventos == null) return null;
 
-            var resultado = _mapper.Map<EventoDto[]>(eventos);
+            var resultado = _mapper.Map<PageList<EventoDto>>(eventos);
 
-            return resultado;
-        }
-        catch (Exception ex)
-        {
-            throw new Exception(ex.Message);
-        }
-    }
-
-    public async Task<EventoDto[]?> GetAllEventosByTemaAsync(int userId, string tema, bool includePalestrantes = false)
-    {
-        try
-        {
-            var eventos = await _eventoPersistence.GetAllEventosByTemaAsync(userId, tema, includePalestrantes);
-            if (eventos == null) return null;
-
-            var resultado = _mapper.Map<EventoDto[]>(eventos);
+            // Testar o auto mapper no Helpers
+            resultado.CurrentPage = eventos.CurrentPage;
+            resultado.TotalCount = eventos.TotalCount;
+            resultado.PageSize = eventos.PageSize;
+            resultado.TotalPages = eventos.TotalPages;
 
             return resultado;
         }

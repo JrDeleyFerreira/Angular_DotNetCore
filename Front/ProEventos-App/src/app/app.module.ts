@@ -21,6 +21,7 @@ import { AppComponent } from './app.component';
 import { EventosComponent } from './components/eventos/eventos.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { NavComponent } from './shared/nav/nav.component';
+import { PaginationModule } from 'ngx-bootstrap/pagination';
 
 import { PalestrantesComponent } from './components/palestrantes/palestrantes.component';
 import { ContatosComponent } from './components/contatos/contatos.component';
@@ -72,6 +73,7 @@ defineLocale('pt-br', ptBrLocale);
     ModalModule.forRoot(),
     NgxCurrencyDirective,
     NgxSpinnerModule,
+    PaginationModule.forRoot(),
     ReactiveFormsModule,
     ToastrModule.forRoot({
       timeOut: 4000,

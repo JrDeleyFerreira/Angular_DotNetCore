@@ -1,0 +1,21 @@
+using System.Text.Json;
+using ProEventos.Api.Models;
+
+namespace ProEventos.Api.Extensions;
+
+public static class Pagination
+{
+    public static void AddPagination(this HttpResponse response, int currentPage, int itemsPerPage,
+        int totalItems, int totalPages)
+    {
+        var pagination = new PaginationHeader(currentPage, itemsPerPage, totalItems, totalPages);
+
+        var options = new JsonSerializerOptions
+        {
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+        };
+
+        response.Headers.Append("Pagination", JsonSerializer.Serialize(pagination, options));
+        response.Headers.Append("Access-Control-Expose-Headers", "Pagination");
+    }
+}
