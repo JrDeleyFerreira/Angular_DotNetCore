@@ -2,7 +2,6 @@ using AutoMapper;
 using ProEventos.Application.Dtos;
 using ProEventos.Domain.Entities;
 using ProEventos.Domain.Identity;
-using ProEventos.Persisttence.Pagination;
 
 namespace ProEventos.Application.Helpers;
 
@@ -14,6 +13,8 @@ public class ProEventosProfile : Profile
         CreateMap<Lote, LoteDto>().ReverseMap();
         CreateMap<RedeSocial, RedeSocialDto>().ReverseMap();
         CreateMap<Palestrante, PalestranteDto>().ReverseMap();
+        CreateMap<Palestrante, PalestranteAddDto>().ReverseMap();
+        CreateMap<Palestrante, PalestranteUpdateDto>().ReverseMap();
 
         CreateMap<User, UserDto>().ReverseMap();
         CreateMap<User, UserLoginDto>().ReverseMap();

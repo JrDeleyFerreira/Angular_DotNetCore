@@ -1,10 +1,12 @@
 using ProEventos.Domain.Entities;
+using ProEventos.Persisttence.Pagination;
 
 namespace ProEventos.Persisttence.Interfaces;
 
-public interface IPalestrantePersistence
+public interface IPalestrantePersistence : IBasePersistence
 {
-    Task<Palestrante[]> GetAllPalestrantesByNomeAsync(string nome, bool includeEventos);
-    Task<Palestrante[]> GetAllPalestrantesAsync(bool includeEventos);
-    Task<Palestrante?> GetPalestranteByIdAsync(int palestranteId, bool includeEventos);
+    Task<PageList<Palestrante>> GetAllPalestrantesAsync(PageParams pageParams,
+        bool includeEventos = false);
+
+    Task<Palestrante?> GetPalestranteByIdAsync(int userId, bool includeEventos = false);
 }

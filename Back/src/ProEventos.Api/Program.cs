@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using ProEventos.Api.Utils;
 using ProEventos.Domain.Identity;
 using System.Text;
 
@@ -61,11 +62,16 @@ builder.Services.AddSwaggerGen(options =>
 builder.Services.AddScoped<IBasePersistence, BasePersistence>();
 builder.Services.AddScoped<IEventoPersistence, EventoPersistence>();
 builder.Services.AddScoped<ILotePersistence, LotePersistence>();
+builder.Services.AddScoped<IPalestrantePersistence, PalestrantePersistence>();
+builder.Services.AddScoped<IRedeSocialPersistence, RedeSocialPersistence>();
 builder.Services.AddScoped<IUserPersistence, UserPersistence>();
+builder.Services.AddScoped<IUtil, Util>();
 
+builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<IEventoService, EventoService>();
 builder.Services.AddScoped<ILoteService, LoteService>();
-builder.Services.AddScoped<IAccountService, AccountService>();
+builder.Services.AddScoped<IPalestranteService, PalestranteService>();
+builder.Services.AddScoped<IRedeSocialService, RedeSocialService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 
 // ------------------------------------------------------------------------------

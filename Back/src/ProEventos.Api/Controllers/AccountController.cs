@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ProEventos.Api.Extensions;
+using ProEventos.Api.Utils;
 using ProEventos.Application.Dtos;
 using System.Security.Claims;
 
@@ -13,11 +14,14 @@ public class AccountController : ControllerBase
 {
 	private readonly IAccountService _accountService;
 	private readonly ITokenService _tokenService;
+	private readonly IUtil _util;
+	private readonly string _folder = "Images";
 
-	public AccountController(IAccountService accountService, ITokenService tokenService)
+	public AccountController(IAccountService accountService, ITokenService tokenService, IUtil util)
 	{
 		_accountService = accountService;
 		_tokenService = tokenService;
+		_util = util;
 	}
 
 	[HttpGet("GetUser")]
@@ -114,6 +118,31 @@ public class AccountController : ControllerBase
 		{
 			return StatusCode(StatusCodes.Status500InternalServerError,
 				$"Erro ao tentar atualizar Usuário. Erro: {ex.Message}");
+		}
+	}
+
+	[HttpPost("upload-image")]
+	public async Task<IActionResult> UploadImage()
+	{
+		try
+		{
+			var user = await _accountService.GetUserByUserNameAsync(User.GetUserName()!);
+			if (user == null) return NoContent();
+
+			var file = Request.Form.Files[0];
+			if (file.Length > 0)
+			{
+				_util.DeleteImage(_folder, user.ImagemURL!);
+				user.ImagemURL = await _util.SaveImage(file, _folder);
+			}
+			var userRetorno = await _accountService.UpdateAccount(user);
+
+			return Ok(userRetorno);
+		}
+		catch (Exception ex)
+		{
+			return StatusCode(StatusCodes.Status500InternalServerError,
+				$"Erro ao tentar realizar upload de Foto do Usuário. Erro: {ex.Message}");
 		}
 	}
 }

@@ -22,6 +22,7 @@ import { EventosComponent } from './components/eventos/eventos.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { NavComponent } from './shared/nav/nav.component';
 import { PaginationModule } from 'ngx-bootstrap/pagination';
+import { TabsModule } from 'ngx-bootstrap/tabs';
 
 import { PalestrantesComponent } from './components/palestrantes/palestrantes.component';
 import { ContatosComponent } from './components/contatos/contatos.component';
@@ -39,6 +40,12 @@ import { LoteService } from './services/lote.service';
 import { defineLocale } from 'ngx-bootstrap/chronos';
 import { AccountService } from './services/account.service';
 import { JwtInterceptor } from './interceptors/jwt.interceptor';
+import { PerfilDetalheComponent } from './components/users/perfil/perfil-detalhe/perfil-detalhe.component';
+import { PalestranteDetalheComponent } from './components/palestrantes/palestrante-detalhe/palestrante-detalhe.component';
+import { PalestranteListaComponent } from './components/palestrantes/palestrante-lista/palestrante-lista.component';
+import { RedesSociaisComponent } from './components/redesSociais/redesSociais.component';
+import { PalestranteService } from './services/palestrante.service';
+import { RedeSocialService } from './services/redeSocial.service';
 
 defineLocale('pt-br', ptBrLocale);
 
@@ -55,7 +62,11 @@ defineLocale('pt-br', ptBrLocale);
     LoginComponent,
     NavComponent,
     PalestrantesComponent,
+    PalestranteDetalheComponent,
+    PalestranteListaComponent,
     PerfilComponent,
+    PerfilDetalheComponent,
+    RedesSociaisComponent,
     RegistrationComponent,
     TituloComponent,
     UsersComponent,
@@ -75,6 +86,7 @@ defineLocale('pt-br', ptBrLocale);
     NgxSpinnerModule,
     PaginationModule.forRoot(),
     ReactiveFormsModule,
+    TabsModule.forRoot(),
     ToastrModule.forRoot({
       timeOut: 4000,
       positionClass: 'toast-bottom-right',
@@ -87,11 +99,13 @@ defineLocale('pt-br', ptBrLocale);
     AccountService,
     EventoService,
     LoteService,
+    PalestranteService,
+    RedeSocialService,
     {
       provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true
     }
   ],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
 
 export class AppModule { }

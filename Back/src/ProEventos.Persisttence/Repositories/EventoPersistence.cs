@@ -18,14 +18,14 @@ public class EventoPersistence : IEventoPersistence
     {
         var query = IncludeCompositions(includePalestrantes);
 
-        var result = query.AsNoTracking()
+        query = query.AsNoTracking()
         .Where(e =>
             (e.Tema!.Contains(pageParams.Terms!, StringComparison.InvariantCultureIgnoreCase) ||
              e.Local!.Contains(pageParams.Terms!, StringComparison.InvariantCultureIgnoreCase)) &&
             e.UserId == userId)
         .OrderBy(e => e.Id);
 
-        return await PageList<Evento>.CreateAsync(result, pageParams.PageNumber, pageParams.PageSize);
+        return await PageList<Evento>.CreateAsync(query, pageParams.PageNumber, pageParams.PageSize);
     }
 
     public async Task<Evento?> GetEventoByIdAsync(int userId, int eventoId,
